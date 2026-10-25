@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Registration & Login</title>
+  
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- CSS STYLES -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-box {
+      width: 380px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .button-box {
+      width: 220px;
+      margin: 10px auto 30px auto;
+      position: relative;
+      box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
+      border-radius: 30px;
+      display: flex;
+      background: #f3f3f3;
+    }
+
+    .toggle-btn {
+      padding: 10px 0;
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+      outline: none;
+      position: relative;
+      width: 50%;
+      text-align: center;
+      font-weight: 500;
+      color: #555;
+      transition: color 0.3s ease;
+    }
+
+    .toggle-btn.active {
+      color: #fff;
+    }
+
+    #btn {
+      top: 0;
+      left: 0;
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      border-radius: 30px;
+      transition: left 0.3s ease;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .input-field {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-field i {
+      position: absolute;
+      left: 15px;
+      color: #888;
+    }
+
+    .input-field .toggle-password {
+      left: auto;
+      right: 15px;
+      cursor: pointer;
+    }
+
+    .input-field input {
+      width: 100%;
+      padding: 12px 40px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .input-field input:focus {
+      border-color: #667eea;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      cursor: pointer;
+      display: block;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      border: 0;
+      outline: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      transition: opacity 0.3s;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.9;
+    }
+
+    .logout-btn {
+      margin-top: 20px;
+      background: #e74c3c;
+    }
+
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+
+    .message-box {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .message-box.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .message-box.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .dashboard {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .success-icon {
+      font-size: 50px;
+      color: #2ecc71;
+      margin-bottom: 15px;
+    }
+
+    .dashboard h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .dashboard p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="form-box">
+      
+      <!-- Tab Buttons -->
+      <div class="button-box">
+        <div id="btn"></div>
+        <button type="button" class="toggle-btn active" onclick="switchTab('login')">Log In</button>
+        <button type="button" class="toggle-btn" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- Alert Message Box -->
+      <div id="message-box" class="message-box hidden"></div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="input-group">
+        <div class="input-field">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="login-email" placeholder="Email Address" required />
+        </div>
+        <div class="input-field">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="login-password" placeholder="Password" required />
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePasswordVisibility('login-password', this)"></i>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="remember-me" />
+          <label for="remember-me">Remember Me</label>
+        </div>
+        <button type="submit" class="submit-btn">Log In</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="input-group hidden">
+        <div class="input-field">
+          <i class="fa-solid fa-user"></i>
+          <input type="text" id="reg-name" placeholder="Full Name" required />
+        </div>
+        <div class="input-field">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="reg-email" placeholder="Email Address" required />
+        </div>
+        <div class="input-field">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="reg-password" placeholder="Password (min 6 chars)" required />
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePasswordVisibility('reg-password', this)"></i>
+        </div>
+        <div class="input-field">
+          <i class="fa-solid fa-shield-halved"></i>
+          <input type="password" id="reg-confirm-password" placeholder="Confirm Password" required />
+        </div>
+        <button type="submit" class="submit-btn">Register</button>
+      </form>
+
+      <!-- Dashboard View (After successful login) -->
+      <div id="dashboard" class="dashboard hidden">
+        <i class="fa-solid fa-circle-check success-icon"></i>
+        <h2 id="welcome-msg">Welcome Back!</h2>
+        <p id="user-details"></p>
+        <button class="submit-btn logout-btn" onclick="logout()">Log Out</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Tab Switching logic
+    function switchTab(tab) {
+      const btn = document.getElementById("btn");
+      const loginForm = document.getElementById("login-form");
+      const registerForm = document.getElementById("register-form");
+      const toggleBtns = document.querySelectorAll(".toggle-btn");
+
+      hideMessage();
+
+      if (tab === "login") {
+        btn.style.left = "0";
+        loginForm.classList.remove("hidden");
+        registerForm.classList.add("hidden");
+        toggleBtns[0].classList.add("active");
+        toggleBtns[1].classList.remove("active");
+      } else {
+        btn.style.left = "50%";
+        loginForm.classList.add("hidden");
+        registerForm.classList.remove("hidden");
+        toggleBtns[0].classList.remove("active");
+        toggleBtns[1].classList.add("active");
+      }
+    }
+
+    // Toggle Password Visibility
+    function togglePasswordVisibility(inputId, icon) {
+      const input = document.getElementById(inputId);
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    }
+
+    // Show Alert Messages
+    function showMessage(text, type) {
+      const messageBox = document.getElementById("message-box");
+      messageBox.textContent = text;
+      messageBox.className = `message-box ${type}`;
+    }
+
+    function hideMessage() {
+      const messageBox = document.getElementById("message-box");
+      messageBox.className = "message-box hidden";
+      messageBox.textContent = "";
+    }
+
+    // Register Form Submission
+    document.getElementById("register-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim().toLowerCase();
+      const password = document.getElementById("reg-password").value;
+      const confirmPassword = document.getElementById("reg-confirm-password").value;
+
+      if (password.length < 6) {
+        showMessage("Password must be at least 6 characters long.", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage("Passwords do not match.", "error");
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+
+      // Check if user already exists
+      const existingUser = users.find(u => u.email === email);
+      if (existingUser) {
+        showMessage("Email is already registered. Please log in.", "error");
+        return;
+      }
+
+      // Save new user
+      users.push({ name, email, password });
+      localStorage.setItem("registeredUsers", JSON.stringify(users));
+
+      showMessage("Registration successful! Switching to login...", "success");
+      
+      // Clear form and switch tab
+      this.reset();
+      setTimeout(() => {
+        switchTab("login");
+      }, 1500);
+    });
+
+    // Login Form Submission
+    document.getElementById("login-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("login-email").value.trim().toLowerCase();
+      const password = document.getElementById("login-password").value;
+
+      let users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        showDashboard(user);
+      } else {
+        showMessage("Invalid email or password.", "error");
+      }
+    });
+
+    // Display Dashboard after login
+    function showDashboard(user) {
+      document.querySelector(".button-box").classList.add("hidden");
+      document.getElementById("login-form").classList.add("hidden");
+      document.getElementById("register-form").classList.add("hidden");
+      hideMessage();
+
+      const dashboard = document.getElementById("dashboard");
+      document.getElementById("welcome-msg").textContent = `Welcome, ${user.name}!`;
+      document.getElementById("user-details").textContent = `Logged in as: ${user.email}`;
+      dashboard.classList.remove("hidden");
+    }
+
+    // Logout function
+    function logout() {
+      document.getElementById("dashboard").classList.add("hidden");
+      document.querySelector(".button-box").classList.remove("hidden");
+      document.getElementById("login-email").value = "";
+      document.getElementById("login-password").value = "";
+      switchTab("login");
+      showMessage("Successfully logged out.", "success");
+    }
+  </script>
+</body>
+</html>
